@@ -1,54 +1,24 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Table from 'react-bootstrap/Table';
+import sortBy from 'lodash.sortby';
 
 import ContactsListRow from './ContactsListRow';
 
 import {GET_CONTACTS} from '../redux/sagas/contactSaga';
 
+import {showDeleteContactConfirm} from '../redux/actions/contactActions';
+
 import './ContactsList.css';
 
-// const data = [
-//     {
-//         uuid: 1,
-//         firstName: 'Travis',
-//         lastName: 'Baker',
-//         street: '1824 Megan Creek Dr.',
-//         city: 'Little Elm',
-//         state: 'TX',
-//         zip: '75068',
-//         phone: '8325175400',
-//         email: 'baker.travis.w@gmail.com'
-//     },
-//     {
-//         uuid: 2,
-//         firstName: 'Travis',
-//         lastName: 'Baker',
-//         street: '1824 Megan Creek Dr.',
-//         city: 'Little Elm',
-//         state: 'TX',
-//         zip: '75068',
-//         phone: '8325175400',
-//         email: 'baker.travis.w@gmail.com'
-//     },
-//     {
-//         uuid: 3,
-//         firstName: 'Travis',
-//         lastName: 'Baker',
-//         street: '1824 Megan Creek Dr.',
-//         city: 'Little Elm',
-//         state: 'TX',
-//         zip: '75068',
-//         phone: '8325175400',
-//         email: 'baker.travis.w@gmail.com'
-//     }
-// ]
 class ContactsList extends Component {
     componentDidMount() {
         this.props.getContacts();
     }
 
     render() {
+        const sortedList = sortContactsList(this.props.contacts);
+        
         return (
             <Table hover responsive>
                 <thead>
@@ -65,13 +35,23 @@ class ContactsList extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {this.props.contacts.map((contact) => {
-                        return <ContactsListRow key={contact.uuid} {...contact} />;
+                    {sortedList.map((contact) => {
+                        return (
+                            <ContactsListRow
+                                key={contact.uuid}
+                                onDelete={this.props.deleteContact}
+                                {...contact}
+                            />
+                        );
                     })}
                 </tbody>
             </Table>
         );
     }
+}
+
+function sortContactsList(contactsList) {
+    return sortBy(contactsList, ['lastName', 'firstName', 'state', 'city', 'zip', 'street', 'email']);
 }
 
 function mapStateToProps(state) {
@@ -82,7 +62,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        getContacts: () => dispatch({type: GET_CONTACTS})
+        getContacts: () => dispatch({type: GET_CONTACTS}),
+        deleteContact: (contact) => dispatch(showDeleteContactConfirm(contact))
     };
 }
 

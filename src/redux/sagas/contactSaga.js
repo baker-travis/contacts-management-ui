@@ -4,7 +4,9 @@ import axios from 'axios';
 import {
     setContacts,
     contactsRequestSuccess,
-    contactsRequestError
+    contactsRequestError,
+    hideDeleteContactConfirm,
+    hideAddNewContactModal
 } from '../actions/contactActions';
 
 export const GET_CONTACTS = "GET_CONTACTS";
@@ -35,9 +37,10 @@ function fetchContacts() {
 function* deleteContact(uuid) {
     try {
         yield call(() => deleteContactRequest(uuid));
-        yield put(contactsRequestSuccess);
+        yield put(contactsRequestSuccess());
         // Fetch all contacts after deleting
         yield put({type: GET_CONTACTS});
+        yield put(hideDeleteContactConfirm());
     } catch(error) {
         let message;
         switch (error.status) {
@@ -59,9 +62,10 @@ function deleteContactRequest(uuid) {
 function* addContact(contact) {
     try {
         yield call(() => addContactRequest(contact));
-        yield put(contactsRequestSuccess);
+        yield put(contactsRequestSuccess());
         // Fetch all contacts after adding a new one
         yield put({type: GET_CONTACTS});
+        yield put(hideAddNewContactModal());
     } catch(error) {
         yield put(contactsRequestError("Unable to create a new contact at this time. Please try again later."));
     }
@@ -75,12 +79,12 @@ export function* watchGetContacts() {
     yield takeLatest(GET_CONTACTS, getContacts);
 }
 
-export function* watchDeleteContacts(uuid) {
-    yield takeLatest(DELETE_CONTACT, () => deleteContact(uuid));
+export function* watchDeleteContacts() {
+    yield takeLatest(DELETE_CONTACT, (action) => deleteContact(action.payload));
 }
 
-export function* watchAddContacts(contact) {
-    yield takeLatest(ADD_CONTACT, () => addContact(contact));
+export function* watchAddContacts() {
+    yield takeLatest(ADD_CONTACT, (action) => addContact(action.payload));
 }
 
 export default function* rootSaga() {

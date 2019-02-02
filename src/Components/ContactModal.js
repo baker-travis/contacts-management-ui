@@ -22,11 +22,27 @@ export default class ContactModal extends Component {
         }
     }
 
+    onSubmit = (e) => {
+        e.preventDefault();
+        // TODO: validate the fields
+        let contact = {};
+
+        contact.firstName = this.state.firstName;
+        contact.lastName = this.state.lastName;
+        contact.street = this.state.street;
+        contact.city = this.state.city;
+        contact.state = this.state.state;
+        contact.zip = this.state.zip;
+        contact.phone = this.state.phone;
+        contact.email = this.state.email;
+        this.props.onSave(contact);
+    }
+
     render() {
         let {contact, close, show} = this.props;
         return (
-            <Modal size= "lg" show={show}>
-                <Modal.Header closeButton onHide={close}>
+            <Modal size= "lg" show={show} onHide={close}>
+                <Modal.Header closeButton>
                     <Modal.Title>
                         {contact ? `Editing Info for ${this.state.firstName} ${this.state.lastName}` : 'New Contact'}
                     </Modal.Title>
@@ -36,52 +52,79 @@ export default class ContactModal extends Component {
                     <Form.Row>
                         <Form.Group as={Col}>
                             <Form.Label>First Name</Form.Label>
-                            <Form.Control value={this.state.firstName} />
+                            <Form.Control
+                                value={this.state.firstName}
+                                onChange={(e) => this.setState({firstName: e.target.value})}
+                            />
                         </Form.Group>
 
                         <Form.Group as={Col}>
                             <Form.Label>Last Name</Form.Label>
-                            <Form.Control value={this.state.lastName} />
+                            <Form.Control
+                                value={this.state.lastName}
+                                onChange={(e) => this.setState({lastName: e.target.value})}
+                            />
                         </Form.Group>
                     </Form.Row>
 
                     <Form.Row>
                         <Form.Group as={Col}>
                             <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" value={this.state.email} />
+                            <Form.Control
+                                type="email"
+                                value={this.state.email}
+                                onChange={(e) => this.setState({email: e.target.value})}
+                            />
                         </Form.Group>
 
                         <Form.Group as={Col}>
                             <Form.Label>Phone Number</Form.Label>
-                            <Form.Control type="tel" value={this.state.phone} />
+                            <Form.Control
+                                type="tel"
+                                value={this.state.phone}
+                                onChange={(e) => this.setState({phone: e.target.value})}
+                            />
                         </Form.Group>
                     </Form.Row>
 
                     <Form.Group>
                         <Form.Label>Address</Form.Label>
-                        <Form.Control placeholder="1234 Main St" value={this.state.street} />
+                        <Form.Control
+                            placeholder="1234 Main St"
+                            value={this.state.street}
+                            onChange={(e) => this.setState({street: e.target.value})}
+                        />
                     </Form.Group>
 
                     <Form.Row>
                         <Form.Group as={Col}>
                             <Form.Label>City</Form.Label>
-                            <Form.Control value={this.state.city} />
+                            <Form.Control
+                                value={this.state.city}
+                                onChange={(e) => this.setState({city: e.target.value})}
+                            />
                         </Form.Group>
 
                         <Form.Group as={Col}>
                             <Form.Label>State</Form.Label>
-                            <Form.Control value={this.state.state} />
+                            <Form.Control
+                                value={this.state.state}
+                                onChange={(e) => this.setState({state: e.target.value})}
+                            />
                         </Form.Group>
 
                         <Form.Group as={Col}>
                             <Form.Label>Zip</Form.Label>
-                            <Form.Control value={this.state.zip} />
+                            <Form.Control
+                                value={this.state.zip}
+                                onChange={(e) => this.setState({zip: e.target.value})}
+                            />
                         </Form.Group>
                     </Form.Row>
                 </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="success">Save</Button>
+                    <Button type="submit" onClick={this.onSubmit} variant="success">Save</Button>
                     <Button onClick={close} variant="secondary">Close</Button>
                 </Modal.Footer>
             </Modal>
