@@ -13,7 +13,6 @@ class App extends Component {
         <header>
           <Header />
         </header>
-        <ContactModal show={true} />
         <div className="mainContent">
           <h1>Maine Doe's Contacts</h1>
           <ContactsList />
