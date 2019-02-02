@@ -19,7 +19,7 @@ export default class ContactsListRow extends Component {
                 <td><a href={`mailto:${this.props.email}`}>{this.props.email}</a></td>
                 <td>
                     <ButtonToolbar>
-                        <Button variant="outline-danger" size="sm" onClick={() => this.props.onDelete(this.props.uuid)}>
+                        <Button variant="outline-danger" size="sm" onClick={() => this.props.onDelete(this.props)}>
                             <span className="glyphicon glyphicon-trash">Delete</span>
                         </Button>
                     </ButtonToolbar>

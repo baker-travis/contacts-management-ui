@@ -1,4 +1,4 @@
-import {createStore, applyMiddleware} from 'redux';
+import {createStore, applyMiddleware, compose} from 'redux';
 import createSagaMiddleware from 'redux-saga';
 
 import contactReducer from './reducers/contactReducer';
@@ -8,9 +8,11 @@ import contactSaga from './sagas/contactSaga';
 export default function configureStore() {
     const sagaMiddleware = createSagaMiddleware();
 
+    const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
     const store = createStore(
         contactReducer,
-        applyMiddleware(sagaMiddleware)
+        composeEnhancers(applyMiddleware(sagaMiddleware))
     );
 
     sagaMiddleware.run(contactSaga);
