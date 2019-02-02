@@ -8,6 +8,7 @@ import contactSaga from './sagas/contactSaga';
 export default function configureStore() {
     const sagaMiddleware = createSagaMiddleware();
 
+    // Needed to make redux dev tools work.
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
     const store = createStore(

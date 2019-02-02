@@ -4,6 +4,17 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 
+const RESET_STATE = {
+    firstName: '',
+    lastName: '',
+    street: '',
+    city: '',
+    state: '',
+    zip: '',
+    phone: '',
+    email: ''
+}
+
 export default class ContactModal extends Component {
     constructor(props) {
         super(props);
@@ -36,6 +47,7 @@ export default class ContactModal extends Component {
         contact.phone = this.state.phone;
         contact.email = this.state.email;
         this.props.onSave(contact);
+        this.setState(RESET_STATE);
     }
 
     render() {
