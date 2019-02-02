@@ -1,0 +1,8 @@
+.ContactsListRow {
+    text-align: left;
+    padding: 5px 0;
+}
+
+.ContactsListRow td {
+    background-color: white;
+}

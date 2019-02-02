@@ -1,0 +1,31 @@
+.ContactsList {
+    border-spacing: 0 10px;
+}
+
+.ContactsList th, .ContactsList td {
+    padding: 2px 5px;
+    text-align: left;
+    border: none;
+    font-size: 0.8rem;
+}
+
+/* tablet size */
+@media(min-width: 480px) {
+    .ContactsList th, .ContactsList td {
+        padding: 5px 8px;
+    }
+
+    .ContactsList td:first-of-type {
+        border-radius: 5px 0 0 5px;
+    }
+    
+    .ContactsList td:last-of-type {
+        border-radius: 0 5px 5px 0;
+    }
+}
+
+@media(min-width: 1024px) {
+    .ContactsList th, .ContactsList td {
+        padding: 10px 15px;
+    }
+}
