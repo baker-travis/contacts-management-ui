@@ -63,7 +63,7 @@ export default class ContactModal extends Component {
                 <Modal.Body>
                     <Form>
                         <Form.Row>
-                            <Form.Group as={Col}>
+                            <Form.Group as={Col} controlId="firstName">
                                 <Form.Label>First Name</Form.Label>
                                 <Form.Control
                                     value={this.state.firstName}
@@ -71,7 +71,7 @@ export default class ContactModal extends Component {
                                 />
                             </Form.Group>
 
-                            <Form.Group as={Col}>
+                            <Form.Group as={Col} controlId="lastName">
                                 <Form.Label>Last Name</Form.Label>
                                 <Form.Control
                                     value={this.state.lastName}
@@ -81,7 +81,7 @@ export default class ContactModal extends Component {
                         </Form.Row>
 
                         <Form.Row>
-                            <Form.Group as={Col}>
+                            <Form.Group as={Col} controlId="email">
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control
                                     type="email"
@@ -90,7 +90,7 @@ export default class ContactModal extends Component {
                                 />
                             </Form.Group>
 
-                            <Form.Group as={Col}>
+                            <Form.Group as={Col} controlId="phone">
                                 <Form.Label>Phone Number</Form.Label>
                                 <Form.Control
                                     type="tel"
@@ -100,7 +100,7 @@ export default class ContactModal extends Component {
                             </Form.Group>
                         </Form.Row>
 
-                        <Form.Group>
+                        <Form.Group controlId="street">
                             <Form.Label>Address</Form.Label>
                             <Form.Control
                                 placeholder="1234 Main St"
@@ -110,7 +110,7 @@ export default class ContactModal extends Component {
                         </Form.Group>
 
                         <Form.Row>
-                            <Form.Group as={Col}>
+                            <Form.Group as={Col} controlId="city">
                                 <Form.Label>City</Form.Label>
                                 <Form.Control
                                     value={this.state.city}
@@ -118,7 +118,7 @@ export default class ContactModal extends Component {
                                 />
                             </Form.Group>
 
-                            <Form.Group as={Col}>
+                            <Form.Group as={Col} controlId="state">
                                 <Form.Label>State</Form.Label>
                                 <Form.Control
                                     value={this.state.state}
@@ -126,7 +126,7 @@ export default class ContactModal extends Component {
                                 />
                             </Form.Group>
 
-                            <Form.Group as={Col}>
+                            <Form.Group as={Col} controlId="zip">
                                 <Form.Label>Zip</Form.Label>
                                 <Form.Control
                                     value={this.state.zip}
