@@ -5,7 +5,7 @@ import configureStore from './redux/configureStore';
 
 // From Kent C Dodds: https://github.com/kentcdodds/react-testing-library/blob/master/examples/__tests__/react-redux.js
 export function renderWithRedux(component,
-    {initialState, store = configureStore()} = {},
+    {initialState, store = configureStore(initialState)} = {},
     ) {
     return {
         ...render(<Provider store={store}>{component}</Provider>),

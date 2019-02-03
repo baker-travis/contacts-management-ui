@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import {connect} from 'react-redux';
 
@@ -19,32 +19,39 @@ import {DELETE_CONTACT, ADD_CONTACT} from './redux/sagas/contactSaga';
 
 import './App.css';
 
-class App extends Component {
-    render() {
-        return (
+function App({
+    showAddNewContactModal,
+    showAddContactModal,
+    hideAddContactModal,
+    addContact,
+    showDeleteContactModal,
+    contactToDelete,
+    hideDeleteContactModal,
+    deleteContact
+}) {
+    return (
         <div>
             <header>
                 <Header />
             </header>
             <div className="mainContent">
                 <h1 className="pageTitle">Maine Doe's Contacts</h1>
-                <Button onClick={this.props.showAddNewContactModal} className="addContactButton" variant="outline-success">Add Contact</Button>
+                <Button onClick={showAddNewContactModal} className="addContactButton" variant="outline-success">Add Contact</Button>
                 <ContactsList />
             </div>
             <ContactModal
-                show={this.props.showAddContactModal}
-                close={this.props.hideAddContactModal}
-                onSave={this.props.addContact}
+                show={showAddContactModal}
+                close={hideAddContactModal}
+                onSave={addContact}
             />
             <DeleteContactModal
-                show={this.props.showDeleteContactModal}
-                contact={this.props.contactToDelete}
-                close={this.props.hideDeleteContactModal}
-                onDelete={this.props.deleteContact}
+                show={showDeleteContactModal}
+                contact={contactToDelete}
+                close={hideDeleteContactModal}
+                onDelete={deleteContact}
             />
         </div>
-        );
-    }
+    );
 }
 
 function mapStateToProps(state) {

@@ -8,8 +8,6 @@ export default function DeleteContactModal({show, close, contact, onDelete}) {
         return null;
     }
 
-    console.log(contact);
-
     return (
         <Modal size= "sm" show={show}>
             <Modal.Header closeButton onHide={close}>

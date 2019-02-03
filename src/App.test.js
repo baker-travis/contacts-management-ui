@@ -52,7 +52,7 @@ describe('<App />', () => {
 
             // Ensure contact is POSTed
             moxios.wait(() => {
-                let request = moxios.requests.mostRecent();
+                const request = moxios.requests.mostRecent();
 
                 expect(request.config.url).toBe('http://localhost:8080/api/v1/contacts');
                 expect(request.config.method).toBe('post');
@@ -67,7 +67,7 @@ describe('<App />', () => {
             setupAddContact(getByText, getByLabelText);
 
             moxios.wait(() => {
-                let request = moxios.requests.mostRecent();
+                const request = moxios.requests.mostRecent();
                 
                 // Respond to post with success
                 request.respondWith({
@@ -76,7 +76,7 @@ describe('<App />', () => {
                 }).then(() => {
                     moxios.wait(async () => {
                         // Respond to get contacts with list containing mocked contact
-                        let request = moxios.requests.mostRecent();
+                        const request = moxios.requests.mostRecent();
                         request.respondWith({
                             status: 200,
                             response: [{...MOCK_CONTACT, uuid: '1'}]
@@ -98,6 +98,31 @@ describe('<App />', () => {
                         done();
                     });
                 });
+            });
+        });
+    });
+
+    describe('DeleteContact modal', () => {
+        it('should delete contact after clicking `Delete` button', (done) => {
+            const uuid = '1';
+            const {getByText, getAllByText} = renderWithRedux(<App />, {initialState: {contacts: [{...MOCK_CONTACT, uuid}]}});
+
+            fireEvent.click(getByText('Delete'));
+
+            const deleteButtons = getAllByText('Delete');
+
+            fireEvent.click(deleteButtons[deleteButtons.length - 1]);
+
+            moxios.wait(() => {
+                const request = moxios.requests.mostRecent();
+                expect(request.config.method).toBe('delete');
+
+                const url = request.config.url;
+
+                const urlParts = url.split('/');
+                const lastPathPart = urlParts[urlParts.length - 1];
+                expect(lastPathPart).toBe(uuid);
+                done();
             });
         });
     });

@@ -1,32 +1,34 @@
-import React, {Component} from 'react';
+import React from 'react';
 import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import PropTypes from 'prop-types';
 
 import './ContactsListRow.css';
 
-export default class ContactsListRow extends Component {
-    render() {
-        return (
-            <tr>
-                <td>{this.props.firstName}</td>
-                <td>{this.props.lastName}</td>
-                <td>{this.props.street}</td>
-                <td>{this.props.city}</td>
-                <td>{this.props.state}</td>
-                <td>{this.props.zip}</td>
-                <td><a href={`tel:${this.props.phone}`}>{this.props.phone}</a></td>
-                <td><a href={`mailto:${this.props.email}`}>{this.props.email}</a></td>
-                <td>
-                    <ButtonToolbar>
-                        <Button variant="outline-danger" size="sm" onClick={() => this.props.onDelete(this.props)}>
-                            <span className="glyphicon glyphicon-trash">Delete</span>
-                        </Button>
-                    </ButtonToolbar>
-                </td>
-            </tr>
-        );
-    }
+export default function ContactsListRow({
+    onDelete,
+    ...contact
+}) {
+
+    return (
+        <tr>
+            <td>{contact.firstName}</td>
+            <td>{contact.lastName}</td>
+            <td>{contact.street}</td>
+            <td>{contact.city}</td>
+            <td>{contact.state}</td>
+            <td>{contact.zip}</td>
+            <td><a href={`tel:${contact.phone}`}>{contact.phone}</a></td>
+            <td><a href={`mailto:${contact.email}`}>{contact.email}</a></td>
+            <td>
+                <ButtonToolbar>
+                    <Button variant="outline-danger" size="sm" onClick={() => onDelete(contact)}>
+                        <span className="glyphicon glyphicon-trash">Delete</span>
+                    </Button>
+                </ButtonToolbar>
+            </td>
+        </tr>
+    );
 }
 
 ContactsListRow.propTypes = {

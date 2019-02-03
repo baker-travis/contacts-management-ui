@@ -5,7 +5,7 @@ import contactReducer from './reducers/contactReducer';
 
 import contactSaga from './sagas/contactSaga';
 
-export default function configureStore() {
+export default function configureStore(initialState) {
     const sagaMiddleware = createSagaMiddleware();
 
     // Needed to make redux dev tools work.
@@ -13,6 +13,7 @@ export default function configureStore() {
 
     const store = createStore(
         contactReducer,
+        initialState,
         composeEnhancers(applyMiddleware(sagaMiddleware))
     );
 
