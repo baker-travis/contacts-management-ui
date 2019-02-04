@@ -9,8 +9,6 @@ import {GET_CONTACTS} from '../redux/sagas/contactSaga';
 
 import {showDeleteContactConfirm} from '../redux/actions/contactActions';
 
-import './ContactsList.css';
-
 class ContactsList extends Component {
     componentDidMount() {
         this.props.getContacts();

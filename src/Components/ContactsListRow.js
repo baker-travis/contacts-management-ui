@@ -3,8 +3,6 @@ import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import PropTypes from 'prop-types';
 
-import './ContactsListRow.css';
-
 export default function ContactsListRow({
     onDelete,
     ...contact
