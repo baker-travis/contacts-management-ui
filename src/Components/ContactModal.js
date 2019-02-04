@@ -55,13 +55,13 @@ export default class ContactModal extends Component {
         let {contact, close, show} = this.props;
         return (
             <Modal size= "lg" show={show} onHide={close}>
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        {contact ? `Editing Info for ${this.state.firstName} ${this.state.lastName}` : 'New Contact'}
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
+                <Form>
+                    <Modal.Header closeButton>
+                        <Modal.Title>
+                            {contact ? `Editing Info for ${this.state.firstName} ${this.state.lastName}` : 'New Contact'}
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
                         <Form.Row>
                             <Form.Group as={Col} controlId="firstName">
                                 <Form.Label>First Name</Form.Label>
@@ -134,12 +134,12 @@ export default class ContactModal extends Component {
                                 />
                             </Form.Group>
                         </Form.Row>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button type="submit" onClick={this.onSubmit} variant="success">Save</Button>
-                    <Button onClick={close} variant="secondary">Close</Button>
-                </Modal.Footer>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button type="submit" onClick={this.onSubmit} variant="success">Save</Button>
+                        <Button onClick={close} variant="secondary">Close</Button>
+                    </Modal.Footer>
+                </Form>
             </Modal>
         );
     }
