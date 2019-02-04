@@ -12,7 +12,9 @@ const RESET_STATE = {
     state: '',
     zip: '',
     phone: '',
-    email: ''
+    email: '',
+    errors: {},
+    touchedFields: {}
 }
 
 export default class ContactModal extends Component {
@@ -29,28 +31,143 @@ export default class ContactModal extends Component {
             state: contact.state || '',
             zip: contact.zip || '',
             phone: contact.phone || '',
-            email: contact.email || ''
+            email: contact.email || '',
+            errors: {},
+            touchedFields: {}
         }
     }
 
     onSubmit = (e) => {
         e.preventDefault();
-        // TODO: validate the fields
-        let contact = {};
-
-        contact.firstName = this.state.firstName;
-        contact.lastName = this.state.lastName;
-        contact.street = this.state.street;
-        contact.city = this.state.city;
-        contact.state = this.state.state;
-        contact.zip = this.state.zip;
-        contact.phone = this.state.phone;
-        contact.email = this.state.email;
+        let errors = this.validate();
+        
+        // if we have any errors, halt submission
+        if (Object.keys(errors).length > 0) {
+            this.setState({errors});
+            return;
+        }
+        
+        let {
+            firstName,
+            lastName,
+            street,
+            city,
+            state,
+            zip,
+            phone,
+            email
+        } = this.state;
+        
+        let contact = {
+            firstName,
+            lastName,
+            street,
+            city,
+            state,
+            zip,
+            phone,
+            email
+        };
         this.props.onSave(contact);
         // clear out the form
         this.setState(RESET_STATE);
     }
+    
+    validate() {
+        let fields = {
+            firstName,
+            lastName,
+            street,
+            city,
+            state,
+            zip,
+            phone,
+            email
+        } = this.state;
+        let errors = {};
+        let hasAddressFields = street || city || state || zip;
+        // TODO: Validate fields
+        
+        return errors;
+    }
 
+    setFirstName = (e) => {
+        const firstName = e.target.value
+        this.setState({firstName});
+        
+        if (isEmpty(firstName)) {
+            this.setState({errors: {...this.state.errors, firstName: 'Name is required'}});
+        }
+    }
+
+    setLastName = (e) => {
+        const lastName = e.target.value
+        this.setState({lastName});
+        
+        if (isEmpty(lastName)) {
+            this.setState({errors: {...this.state.errors, lastName: 'Name is required'}});
+        }
+    }
+    
+    setEmail = (e) => {
+        const email = e.target.value
+        this.setState({email});
+        
+        if (!validEmail(email)) {
+            this.setState({errors: {...this.state.errors, email: 'Enter a valid email'}});
+        }
+    }
+    
+    setPhone = (e) => {
+        const phone = e.target.value
+        this.setState({phone});
+        
+        if (!validPhone(phone)) {
+            this.setState({errors: {...this.state.errors, phone: 'Enter a valid phone'}});
+        }
+    }
+    
+    setStreet = (e) => {
+        const street = e.target.value
+        this.setState({street});
+        
+        if (street && isEmpty(street)) {
+            this.setState({errors: {...this.state.errors, street: 'Enter a valid address'}});
+        }
+    }
+    
+    setCity = (e) => {
+        const city = e.target.value
+        this.setState({city});
+        
+        if (city && isEmpty(city)) {
+            this.setState({errors: {...this.state.errors, city: 'Enter a valid City'}});
+        }
+    }
+    
+    setStateName = (e) => {
+        const state = e.target.value
+        this.setState({state});
+        
+        if (state && isEmpty(state)) {
+            this.setState({errors: {...this.state.errors, state: 'Enter a valid State'}});
+        }
+    }
+    
+    setZip = (e) => {
+        const zip = e.target.value;
+        this.setState({zip: e.target.value});
+        
+        // If a zip code is typed in but is not valid...
+        if (zip && !validZip(zip)) {
+            this.setState({errors: {...this.state.errors, zip: 'Enter a valid 5 digit zip'}});
+        }
+    }
+    
+    setTouched = (fieldName) => {
+        this.setState({touched: ...this.state.touched, [fieldName]: true});
+    }
+ 
     render() {
         let {contact, close, show} = this.props;
         return (
@@ -67,7 +184,8 @@ export default class ContactModal extends Component {
                                 <Form.Label>First Name</Form.Label>
                                 <Form.Control
                                     value={this.state.firstName}
-                                    onChange={(e) => this.setState({firstName: e.target.value})}
+                                    onChange={this.setFirstName}
+                                    onBlur={() => this.setTouched('firstName')}
                                 />
                             </Form.Group>
 
@@ -75,7 +193,8 @@ export default class ContactModal extends Component {
                                 <Form.Label>Last Name</Form.Label>
                                 <Form.Control
                                     value={this.state.lastName}
-                                    onChange={(e) => this.setState({lastName: e.target.value})}
+                                    onChange={this.setLastName}
+                                    onBlur={() => this.setTouched('lastName')}
                                 />
                             </Form.Group>
                         </Form.Row>
@@ -86,7 +205,8 @@ export default class ContactModal extends Component {
                                 <Form.Control
                                     type="email"
                                     value={this.state.email}
-                                    onChange={(e) => this.setState({email: e.target.value})}
+                                    onChange={this.setEmail}
+                                    onBlur={() => this.setTouched('email')}
                                 />
                             </Form.Group>
 
@@ -95,7 +215,8 @@ export default class ContactModal extends Component {
                                 <Form.Control
                                     type="tel"
                                     value={this.state.phone}
-                                    onChange={(e) => this.setState({phone: e.target.value})}
+                                    onChange={this.setPhone}
+                                    onBlur={() => this.setTouched('phone')}
                                 />
                             </Form.Group>
                         </Form.Row>
@@ -105,7 +226,8 @@ export default class ContactModal extends Component {
                             <Form.Control
                                 placeholder="1234 Main St"
                                 value={this.state.street}
-                                onChange={(e) => this.setState({street: e.target.value})}
+                                onChange={this.setStreet}
+                                onBlur={() => this.setTouched('street')}
                             />
                         </Form.Group>
 
@@ -114,7 +236,8 @@ export default class ContactModal extends Component {
                                 <Form.Label>City</Form.Label>
                                 <Form.Control
                                     value={this.state.city}
-                                    onChange={(e) => this.setState({city: e.target.value})}
+                                    onChange={this.setCity}
+                                    onBlur={() => this.setTouched('city')}
                                 />
                             </Form.Group>
 
@@ -122,7 +245,8 @@ export default class ContactModal extends Component {
                                 <Form.Label>State</Form.Label>
                                 <Form.Control
                                     value={this.state.state}
-                                    onChange={(e) => this.setState({state: e.target.value})}
+                                    onChange={this.setStateName}
+                                    onBlur={() => this.setTouched('state')}
                                 />
                             </Form.Group>
 
@@ -130,7 +254,9 @@ export default class ContactModal extends Component {
                                 <Form.Label>Zip</Form.Label>
                                 <Form.Control
                                     value={this.state.zip}
-                                    onChange={(e) => this.setState({zip: e.target.value})}
+                                    onChange={this.setZip}
+                                    onBlur={() => this.setTouched('zip')}
+                                    maxLength="5"
                                 />
                             </Form.Group>
                         </Form.Row>
@@ -143,4 +269,27 @@ export default class ContactModal extends Component {
             </Modal>
         );
     }
+}
+
+function validZip(zip) {
+    const zipRegEx = /^\d{5}$/;
+    return zipRegEx.test(zip);
+}
+
+function validEmail(email) {
+    // Email RegEx from https://stackoverflow.com/a/46181
+    const emailRegEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegEx.test(email);
+}
+
+function validPhone(phone) {
+    // Phone RegEx from
+    const phoneRegEx = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+    return phoneRegEx.test(phone);
+}
+
+// expects a string
+function isEmpty(text) {
+    const whitespaceRegEx = /^\s*$/;
+    return whitespaceRegEx.test(text);
 }
