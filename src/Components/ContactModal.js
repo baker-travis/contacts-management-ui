@@ -14,7 +14,7 @@ const RESET_STATE = {
     phone: '',
     email: '',
     errors: {},
-    touchedFields: {}
+    visited: {}
 }
 
 export default class ContactModal extends Component {
@@ -33,21 +33,31 @@ export default class ContactModal extends Component {
             phone: contact.phone || '',
             email: contact.email || '',
             errors: {},
-            touchedFields: {}
+            visited: {}
         }
     }
 
     onSubmit = (e) => {
         e.preventDefault();
-        let errors = this.validate();
+        const errors = this.validate();
         
         // if we have any errors, halt submission
-        if (Object.keys(errors).length > 0) {
-            this.setState({errors});
-            return;
+        for (let key in errors) {
+            if (errors[key]) {
+                // set required fields as visited so that the errors show up
+                this.setState({
+                    visited: {
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        phone: true
+                    }
+                });
+                return;
+            }
         }
         
-        let {
+        const {
             firstName,
             lastName,
             street,
@@ -58,7 +68,7 @@ export default class ContactModal extends Component {
             email
         } = this.state;
         
-        let contact = {
+        const contact = {
             firstName,
             lastName,
             street,
@@ -74,105 +84,103 @@ export default class ContactModal extends Component {
     }
     
     validate() {
-        let fields = {
+        let {
             firstName,
             lastName,
-            street,
-            city,
-            state,
-            zip,
             phone,
             email
         } = this.state;
-        let errors = {};
-        let hasAddressFields = street || city || state || zip;
-        // TODO: Validate fields
-        
+        // get address validation errors
+        let errors = this.validateAddress();
+        errors.firstName = isEmpty(firstName) ? 'Name is required' : null;
+        errors.lastName = isEmpty(lastName) ? 'Name is required' : null;
+        errors.email = validEmail(email) ? null : 'Enter a valid email';
+        errors.phone = validPhone(phone) ? null : 'Enter a valid phone';
+        this.setState({errors});
+
         return errors;
     }
 
     setFirstName = (e) => {
-        const firstName = e.target.value
-        this.setState({firstName});
-        
-        if (isEmpty(firstName)) {
-            this.setState({errors: {...this.state.errors, firstName: 'Name is required'}});
-        }
+        const firstName = e.target.value;
+        this.setState({firstName}, this.validate);
     }
 
     setLastName = (e) => {
-        const lastName = e.target.value
-        this.setState({lastName});
-        
-        if (isEmpty(lastName)) {
-            this.setState({errors: {...this.state.errors, lastName: 'Name is required'}});
-        }
+        const lastName = e.target.value;
+        this.setState({lastName}, this.validate);
     }
     
     setEmail = (e) => {
-        const email = e.target.value
-        this.setState({email});
-        
-        if (!validEmail(email)) {
-            this.setState({errors: {...this.state.errors, email: 'Enter a valid email'}});
-        }
+        const email = e.target.value;
+        this.setState({email}, this.validate);
     }
     
     setPhone = (e) => {
-        const phone = e.target.value
-        this.setState({phone});
-        
-        if (!validPhone(phone)) {
-            this.setState({errors: {...this.state.errors, phone: 'Enter a valid phone'}});
-        }
+        const phone = e.target.value;
+        this.setState({phone}, this.validate);
     }
     
     setStreet = (e) => {
-        const street = e.target.value
-        this.setState({street});
-        
-        if (street && isEmpty(street)) {
-            this.setState({errors: {...this.state.errors, street: 'Enter a valid address'}});
-        }
+        const street = e.target.value;
+        this.setState({street}, this.validateAddress);
     }
     
     setCity = (e) => {
-        const city = e.target.value
-        this.setState({city});
-        
-        if (city && isEmpty(city)) {
-            this.setState({errors: {...this.state.errors, city: 'Enter a valid City'}});
-        }
+        const city = e.target.value;
+        this.setState({city}, this.validateAddress);
     }
     
     setStateName = (e) => {
-        const state = e.target.value
-        this.setState({state});
-        
-        if (state && isEmpty(state)) {
-            this.setState({errors: {...this.state.errors, state: 'Enter a valid State'}});
-        }
+        const state = e.target.value;
+        this.setState({state}, this.validateAddress);
     }
     
     setZip = (e) => {
         const zip = e.target.value;
-        this.setState({zip: e.target.value});
-        
-        // If a zip code is typed in but is not valid...
-        if (zip && !validZip(zip)) {
-            this.setState({errors: {...this.state.errors, zip: 'Enter a valid 5 digit zip'}});
-        }
+        this.setState({zip}, this.validateAddress);
     }
-    
-    setTouched = (fieldName) => {
-        this.setState({touched: ...this.state.touched, [fieldName]: true});
+
+    validateAddress = () => {
+        let {street, city, state, zip} = this.state;
+        let hasAddressFields = !!(street || city || state || zip);
+        let errors = {};
+
+        if (hasAddressFields) {
+            errors.street = isEmpty(street) ? 'Enter a valid address' : null;
+            errors.city = isEmpty(city) ? 'Enter a valid city' : null;
+            errors.state = isEmpty(state) ? 'Enter a valid state' : null;
+            errors.zip = validZip(zip) ? null : 'Enter a valid 5 digit zip';
+        }
+
+        this.setState({
+            visited: {
+                ...this.state.visited,
+                street: hasAddressFields,
+                city: hasAddressFields,
+                state: hasAddressFields,
+                zip: hasAddressFields
+            },
+            errors: {
+                ...this.state.errors,
+                ...errors
+            }
+        });
+
+        return errors;
+    }
+
+    setVisited = (fieldName) => {
+        if (!this.state.visited[fieldName] && this.state[fieldName]) {
+            this.setState({visited: {...this.state.visited, [fieldName]: true}});
+        }
     }
  
     render() {
         let {contact, close, show} = this.props;
         return (
             <Modal size= "lg" show={show} onHide={close}>
-                <Form>
+                <Form onSubmit={this.onSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             {contact ? `Editing Info for ${this.state.firstName} ${this.state.lastName}` : 'New Contact'}
@@ -185,8 +193,13 @@ export default class ContactModal extends Component {
                                 <Form.Control
                                     value={this.state.firstName}
                                     onChange={this.setFirstName}
-                                    onBlur={() => this.setTouched('firstName')}
+                                    onBlur={() => this.setVisited('firstName')}
+                                    isInvalid={this.state.visited.firstName && this.state.errors.firstName}
+                                    isValid={this.state.visited.firstName && !this.state.errors.firstName}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    {this.state.errors.firstName}
+                                </Form.Control.Feedback>
                             </Form.Group>
 
                             <Form.Group as={Col} controlId="lastName">
@@ -194,8 +207,13 @@ export default class ContactModal extends Component {
                                 <Form.Control
                                     value={this.state.lastName}
                                     onChange={this.setLastName}
-                                    onBlur={() => this.setTouched('lastName')}
+                                    onBlur={() => this.setVisited('lastName')}
+                                    isInvalid={this.state.visited.lastName && this.state.errors.lastName}
+                                    isValid={this.state.visited.lastName && !this.state.errors.lastName}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    {this.state.errors.lastName}
+                                </Form.Control.Feedback>
                             </Form.Group>
                         </Form.Row>
 
@@ -206,8 +224,13 @@ export default class ContactModal extends Component {
                                     type="email"
                                     value={this.state.email}
                                     onChange={this.setEmail}
-                                    onBlur={() => this.setTouched('email')}
+                                    onBlur={() => this.setVisited('email')}
+                                    isInvalid={this.state.visited.email && this.state.errors.email}
+                                    isValid={this.state.visited.email && !this.state.errors.email}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    {this.state.errors.email}
+                                </Form.Control.Feedback>
                             </Form.Group>
 
                             <Form.Group as={Col} controlId="phone">
@@ -216,8 +239,13 @@ export default class ContactModal extends Component {
                                     type="tel"
                                     value={this.state.phone}
                                     onChange={this.setPhone}
-                                    onBlur={() => this.setTouched('phone')}
+                                    onBlur={() => this.setVisited('phone')}
+                                    isInvalid={this.state.visited.phone && this.state.errors.phone}
+                                    isValid={this.state.visited.phone && !this.state.errors.phone}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    {this.state.errors.phone}
+                                </Form.Control.Feedback>
                             </Form.Group>
                         </Form.Row>
 
@@ -227,8 +255,13 @@ export default class ContactModal extends Component {
                                 placeholder="1234 Main St"
                                 value={this.state.street}
                                 onChange={this.setStreet}
-                                onBlur={() => this.setTouched('street')}
+                                onBlur={this.validateAddress}
+                                isInvalid={this.state.visited.street && this.state.errors.street}
+                                isValid={this.state.visited.street && !this.state.errors.street}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {this.state.errors.street}
+                            </Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Row>
@@ -237,8 +270,13 @@ export default class ContactModal extends Component {
                                 <Form.Control
                                     value={this.state.city}
                                     onChange={this.setCity}
-                                    onBlur={() => this.setTouched('city')}
+                                    onBlur={this.validateAddress}
+                                    isInvalid={this.state.visited.city && this.state.errors.city}
+                                    isValid={this.state.visited.city && !this.state.errors.city}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    {this.state.errors.city}
+                                </Form.Control.Feedback>
                             </Form.Group>
 
                             <Form.Group as={Col} controlId="state">
@@ -246,8 +284,13 @@ export default class ContactModal extends Component {
                                 <Form.Control
                                     value={this.state.state}
                                     onChange={this.setStateName}
-                                    onBlur={() => this.setTouched('state')}
+                                    onBlur={this.validateAddress}
+                                    isInvalid={this.state.visited.state && this.state.errors.state}
+                                    isValid={this.state.visited.state && !this.state.errors.state}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    {this.state.errors.state}
+                                </Form.Control.Feedback>
                             </Form.Group>
 
                             <Form.Group as={Col} controlId="zip">
@@ -255,9 +298,14 @@ export default class ContactModal extends Component {
                                 <Form.Control
                                     value={this.state.zip}
                                     onChange={this.setZip}
-                                    onBlur={() => this.setTouched('zip')}
+                                    onBlur={this.validateAddress}
                                     maxLength="5"
+                                    isInvalid={this.state.visited.zip && this.state.errors.zip}
+                                    isValid={this.state.visited.zip && !this.state.errors.zip}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    {this.state.errors.zip}
+                                </Form.Control.Feedback>
                             </Form.Group>
                         </Form.Row>
                     </Modal.Body>
