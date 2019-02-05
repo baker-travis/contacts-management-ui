@@ -12,12 +12,12 @@ export default function ContactsListRow({
         <tr>
             <td>{contact.firstName}</td>
             <td>{contact.lastName}</td>
+            <td><a href={`tel:${contact.phone}`}>{contact.phone}</a></td>
+            <td><a href={`mailto:${contact.email}`}>{contact.email}</a></td>
             <td>{contact.street}</td>
             <td>{contact.city}</td>
             <td>{contact.state}</td>
             <td>{contact.zip}</td>
-            <td><a href={`tel:${contact.phone}`}>{contact.phone}</a></td>
-            <td><a href={`mailto:${contact.email}`}>{contact.email}</a></td>
             <td>
                 <ButtonToolbar>
                     <Button variant="outline-danger" size="sm" onClick={() => onDelete(contact)}>

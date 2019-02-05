@@ -3,7 +3,7 @@ import {
     cleanup
 } from 'react-testing-library';
 import sortBy from 'lodash.sortby';
-import {renderWithRedux} from '../testUtil';
+import {renderWithRedux} from '../utility/testUtil';
 
 import ContactsList from './ContactsList';
 

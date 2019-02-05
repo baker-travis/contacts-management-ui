@@ -4,6 +4,14 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 
+import ContactModalField from './ContactModalField';
+import {
+    validEmail,
+    validPhone,
+    validZip,
+    isEmpty
+} from '../utility/util';
+
 const RESET_STATE = {
     firstName: '',
     lastName: '',
@@ -175,11 +183,17 @@ export default class ContactModal extends Component {
             this.setState({visited: {...this.state.visited, [fieldName]: true}});
         }
     }
+
+    onClose = () => {
+        // Clear out the form
+        this.setState(RESET_STATE);
+        this.props.close();
+    }
  
     render() {
-        let {contact, close, show} = this.props;
+        let {contact, show} = this.props;
         return (
-            <Modal size= "lg" show={show} onHide={close}>
+            <Modal size= "lg" show={show} onHide={this.onClose}>
                 <Form onSubmit={this.onSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
@@ -188,156 +202,107 @@ export default class ContactModal extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         <Form.Row>
-                            <Form.Group as={Col} controlId="firstName">
-                                <Form.Label>First Name</Form.Label>
-                                <Form.Control
-                                    value={this.state.firstName}
-                                    onChange={this.setFirstName}
-                                    onBlur={() => this.setVisited('firstName')}
-                                    isInvalid={this.state.visited.firstName && this.state.errors.firstName}
-                                    isValid={this.state.visited.firstName && !this.state.errors.firstName}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.errors.firstName}
-                                </Form.Control.Feedback>
-                            </Form.Group>
-
-                            <Form.Group as={Col} controlId="lastName">
-                                <Form.Label>Last Name</Form.Label>
-                                <Form.Control
-                                    value={this.state.lastName}
-                                    onChange={this.setLastName}
-                                    onBlur={() => this.setVisited('lastName')}
-                                    isInvalid={this.state.visited.lastName && this.state.errors.lastName}
-                                    isValid={this.state.visited.lastName && !this.state.errors.lastName}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.errors.lastName}
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Form.Row>
-
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="email">
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control
-                                    type="email"
-                                    value={this.state.email}
-                                    onChange={this.setEmail}
-                                    onBlur={() => this.setVisited('email')}
-                                    isInvalid={this.state.visited.email && this.state.errors.email}
-                                    isValid={this.state.visited.email && !this.state.errors.email}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.errors.email}
-                                </Form.Control.Feedback>
-                            </Form.Group>
-
-                            <Form.Group as={Col} controlId="phone">
-                                <Form.Label>Phone Number</Form.Label>
-                                <Form.Control
-                                    type="tel"
-                                    value={this.state.phone}
-                                    onChange={this.setPhone}
-                                    onBlur={() => this.setVisited('phone')}
-                                    isInvalid={this.state.visited.phone && this.state.errors.phone}
-                                    isValid={this.state.visited.phone && !this.state.errors.phone}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.errors.phone}
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Form.Row>
-
-                        <Form.Group controlId="street">
-                            <Form.Label>Address</Form.Label>
-                            <Form.Control
-                                placeholder="1234 Main St"
-                                value={this.state.street}
-                                onChange={this.setStreet}
-                                onBlur={this.validateAddress}
-                                isInvalid={this.state.visited.street && this.state.errors.street}
-                                isValid={this.state.visited.street && !this.state.errors.street}
+                            <ContactModalField
+                                as={Col}
+                                controlId="firstName"
+                                label="First Name"
+                                value={this.state.firstName}
+                                onChange={this.setFirstName}
+                                onBlur={() => this.setVisited('firstName')}
+                                visited={this.state.visited.firstName}
+                                error={this.state.errors.firstName}
                             />
-                            <Form.Control.Feedback type="invalid">
-                                {this.state.errors.street}
-                            </Form.Control.Feedback>
-                        </Form.Group>
+
+                            <ContactModalField
+                                as={Col}
+                                controlId="lastName"
+                                label="Last Name"
+                                value={this.state.lastName}
+                                onChange={this.setLastName}
+                                onBlur={() => this.setVisited('lastName')}
+                                visited={this.state.visited.lastName}
+                                error={this.state.errors.lastName}
+                            />
+                        </Form.Row>
 
                         <Form.Row>
-                            <Form.Group as={Col} controlId="city">
-                                <Form.Label>City</Form.Label>
-                                <Form.Control
-                                    value={this.state.city}
-                                    onChange={this.setCity}
-                                    onBlur={this.validateAddress}
-                                    isInvalid={this.state.visited.city && this.state.errors.city}
-                                    isValid={this.state.visited.city && !this.state.errors.city}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.errors.city}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+                            <ContactModalField
+                                as={Col}
+                                controlId="email"
+                                label="Email"
+                                value={this.state.email}
+                                onChange={this.setEmail}
+                                onBlur={() => this.setVisited('email')}
+                                visited={this.state.visited.email}
+                                error={this.state.errors.email}
+                                type="email"
+                            />
 
-                            <Form.Group as={Col} controlId="state">
-                                <Form.Label>State</Form.Label>
-                                <Form.Control
-                                    value={this.state.state}
-                                    onChange={this.setStateName}
-                                    onBlur={this.validateAddress}
-                                    isInvalid={this.state.visited.state && this.state.errors.state}
-                                    isValid={this.state.visited.state && !this.state.errors.state}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.errors.state}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+                            <ContactModalField
+                                as={Col}
+                                controlId="phone"
+                                label="Phone"
+                                value={this.state.phone}
+                                onChange={this.setPhone}
+                                onBlur={() => this.setVisited('phone')}
+                                visited={this.state.visited.phone}
+                                error={this.state.errors.phone}
+                                type="tel"
+                            />
+                        </Form.Row>
 
-                            <Form.Group as={Col} controlId="zip">
-                                <Form.Label>Zip</Form.Label>
-                                <Form.Control
-                                    value={this.state.zip}
-                                    onChange={this.setZip}
-                                    onBlur={this.validateAddress}
-                                    maxLength="5"
-                                    isInvalid={this.state.visited.zip && this.state.errors.zip}
-                                    isValid={this.state.visited.zip && !this.state.errors.zip}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.errors.zip}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+                        <ContactModalField
+                            controlId="street"
+                            label="Address"
+                            value={this.state.street}
+                            onChange={this.setStreet}
+                            onBlur={this.validateAddress}
+                            visited={this.state.visited.street}
+                            error={this.state.errors.street}
+                            placeholder="1234 Main St"
+                        />
+
+                        <Form.Row>
+                            <ContactModalField
+                                as={Col}
+                                controlId="city"
+                                label="City"
+                                value={this.state.city}
+                                onChange={this.setCity}
+                                onBlur={this.validateAddress}
+                                visited={this.state.visited.city}
+                                error={this.state.errors.city}
+                            />
+
+                            <ContactModalField
+                                as={Col}
+                                controlId="state"
+                                label="State"
+                                value={this.state.state}
+                                onChange={this.setStateName}
+                                onBlur={this.validateAddress}
+                                visited={this.state.visited.state}
+                                error={this.state.errors.state}
+                            />
+
+                            <ContactModalField
+                                as={Col}
+                                controlId="zip"
+                                label="Zip"
+                                value={this.state.zip}
+                                onChange={this.setZip}
+                                onBlur={this.validateAddress}
+                                visited={this.state.visited.zip}
+                                error={this.state.errors.zip}
+                            />
                         </Form.Row>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button type="submit" onClick={this.onSubmit} variant="success">Save</Button>
-                        <Button onClick={close} variant="secondary">Close</Button>
+                        <Button onClick={this.onClose} variant="secondary">Close</Button>
                     </Modal.Footer>
                 </Form>
             </Modal>
         );
     }
-}
-
-function validZip(zip) {
-    const zipRegEx = /^\d{5}$/;
-    return zipRegEx.test(zip);
-}
-
-function validEmail(email) {
-    // Email RegEx from https://stackoverflow.com/a/46181
-    const emailRegEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return emailRegEx.test(email);
-}
-
-function validPhone(phone) {
-    // Phone RegEx from
-    const phoneRegEx = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-    return phoneRegEx.test(phone);
-}
-
-// expects a string
-function isEmpty(text) {
-    const whitespaceRegEx = /^\s*$/;
-    return whitespaceRegEx.test(text);
 }
