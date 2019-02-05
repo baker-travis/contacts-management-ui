@@ -5,7 +5,7 @@ import {
     cleanup,
     waitForElement
 } from 'react-testing-library';
-import {renderWithRedux} from './testUtil';
+import {renderWithRedux} from './utility/testUtil';
 
 import App from './App';
 

@@ -23,12 +23,12 @@ class ContactsList extends Component {
                     <tr>
                         <th>First Name</th>
                         <th>Last Name</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
                         <th>Street Address</th>
                         <th>City</th>
                         <th>State</th>
                         <th>Zip</th>
-                        <th>Phone Number</th>
-                        <th>Email</th>
                         <th></th>
                     </tr>
                 </thead>
