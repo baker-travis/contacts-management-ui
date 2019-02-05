@@ -100,8 +100,8 @@ export default class ContactModal extends Component {
         } = this.state;
         // get address validation errors
         let errors = this.validateAddress();
-        errors.firstName = isEmpty(firstName) ? 'Name is required' : null;
-        errors.lastName = isEmpty(lastName) ? 'Name is required' : null;
+        errors.firstName = isEmpty(firstName) ? 'First name is required' : null;
+        errors.lastName = isEmpty(lastName) ? 'Last name is required' : null;
         errors.email = validEmail(email) ? null : 'Enter a valid email';
         errors.phone = validPhone(phone) ? null : 'Enter a valid phone';
         this.setState({errors});
@@ -241,7 +241,7 @@ export default class ContactModal extends Component {
                             <ContactModalField
                                 as={Col}
                                 controlId="phone"
-                                label="Phone"
+                                label="Phone Number"
                                 value={this.state.phone}
                                 onChange={this.setPhone}
                                 onBlur={() => this.setVisited('phone')}
