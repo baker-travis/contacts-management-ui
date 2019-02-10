@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import Table from 'react-bootstrap/Table';
 import sortBy from 'lodash.sortby';
@@ -9,43 +9,40 @@ import {GET_CONTACTS} from '../redux/sagas/contactSaga';
 
 import {showDeleteContactConfirm} from '../redux/actions/contactActions';
 
-class ContactsList extends Component {
-    componentDidMount() {
-        this.props.getContacts();
-    }
-
-    render() {
-        const sortedList = sortContactsList(this.props.contacts);
+function ContactsList({contacts, getContacts, deleteContact}) {
+    useEffect(() => {
+        getContacts();
+    }, []);
+    const sortedList = sortContactsList(contacts);
         
-        return (
-            <Table hover responsive>
-                <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Phone Number</th>
-                        <th>Email</th>
-                        <th>Street Address</th>
-                        <th>City</th>
-                        <th>State</th>
-                        <th>Zip</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedList.map((contact) => {
-                        return (
-                            <ContactsListRow
-                                key={contact.uuid}
-                                onDelete={this.props.deleteContact}
-                                {...contact}
-                            />
-                        );
-                    })}
-                </tbody>
-            </Table>
-        );
-    }
+    return (
+        <Table hover responsive>
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>Street Address</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Zip</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {sortedList.map((contact) => {
+                    return (
+                        <ContactsListRow
+                            key={contact.uuid}
+                            onDelete={deleteContact}
+                            {...contact}
+                        />
+                    );
+                })}
+            </tbody>
+        </Table>
+    );
 }
 
 function sortContactsList(contactsList) {
