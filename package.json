@@ -32,5 +32,6 @@
   "devDependencies": {
     "moxios": "^0.4.0",
     "react-testing-library": "^5.4.4"
-  }
+  },
+  "homepage": "https://baker-travis.github.io/contacts-management-ui/"
 }
